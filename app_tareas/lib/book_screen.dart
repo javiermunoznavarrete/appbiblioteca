@@ -1,27 +1,27 @@
-import 'package:app_tareas/controllers/task_contoller.dart';
+import 'package:app_tareas/controllers/book_controller.dart';
 import 'package:app_tareas/utils/date_utils.dart';
-import 'package:app_tareas/widgets/taskWidgets/empty_state.dart';
-import 'package:app_tareas/widgets/taskWidgets/filter_chips_row.dart';
-import 'package:app_tareas/widgets/taskWidgets/filter_menu_button.dart';
-import 'package:app_tareas/widgets/taskWidgets/new_task_fab.dart';
-import 'package:app_tareas/widgets/taskWidgets/search_field.dart';
-import 'package:app_tareas/widgets/taskWidgets/task_list_view.dart';
+import 'package:app_tareas/widgets/bookWidgets/empty_state.dart';
+import 'package:app_tareas/widgets/bookWidgets/filter_chips_row.dart';
+import 'package:app_tareas/widgets/bookWidgets/filter_menu_button.dart';
+import 'package:app_tareas/widgets/bookWidgets/new_book_fab.dart';
+import 'package:app_tareas/widgets/bookWidgets/search_field.dart';
+import 'package:app_tareas/widgets/bookWidgets/book_list_view.dart';
 import 'package:flutter/material.dart';
 
-class TaskScreen extends StatefulWidget {
-  const TaskScreen({super.key});
+class BookScreen extends StatefulWidget {
+  const BookScreen({super.key});
 
   @override
-  State<TaskScreen> createState() => _TaskScreenState();
+  State<BookScreen> createState() => _BookScreenState();
 }
 
-class _TaskScreenState extends State<TaskScreen> {
-  late final TaskController _ctrl;
+class _BookScreenState extends State<BookScreen> {
+  late final BookController _ctrl;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = TaskController();
+    _ctrl = BookController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _ctrl.load();
     });
@@ -41,17 +41,17 @@ class _TaskScreenState extends State<TaskScreen> {
         final items = _ctrl.filtered;
         return Scaffold(
           appBar: AppBar(
-            title: const Text("Tareas"),
+            title: const Text("Biblioteca"),
             actions: [
               FilterMenuButton(value: _ctrl.filter, onChanged: _ctrl.setFilter),
             ],
           ),
-          floatingActionButton: NewTaskFab(
-            onSubmit: (title, note, due) =>
-                _ctrl.add(title, note: note, due: due),
+          floatingActionButton: NewBookFab(
+            onSubmit: (title, note, returnDate) =>
+                _ctrl.add(title, note: note, returnDate: returnDate),
             onCreated: (ctx) => ScaffoldMessenger.of(
               ctx,
-            ).showSnackBar(const SnackBar(content: Text("Tarea Creada"))),
+            ).showSnackBar(const SnackBar(content: Text("Libro Agregado"))),
           ),
           body: SafeArea(
             child: Column(
@@ -66,13 +66,13 @@ class _TaskScreenState extends State<TaskScreen> {
                 Expanded(
                   child: items.isEmpty
                       ? const EmptyState()
-                      : TaskListView(
+                      : BookListView(
                           items: items,
-                          onToggle: (t, v) => _ctrl.toggle(t, v),
-                          onDelete: (t) {
-                            _ctrl.remove(t);
+                          onStatusChanged: (b, status) => _ctrl.changeStatus(b, status),
+                          onDelete: (b) {
+                            _ctrl.remove(b);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Tarea Eliminada")),
+                              const SnackBar(content: Text("Libro Eliminado")),
                             );
                           },
                           dateFormatter: formatShortDate,

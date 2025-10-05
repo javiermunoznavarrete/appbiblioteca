@@ -1,6 +1,6 @@
 import 'package:app_tareas/controllers/auth_controller.dart';
 import 'package:app_tareas/repositories/auth_repository.dart';
-import 'package:app_tareas/task_screen.dart';
+import 'package:app_tareas/book_screen.dart';
 import 'package:flutter/material.dart'; // Importa las herramientas visuales de Flutter
 
 // Define un widget con estado (porque hay campos que cambian, como contraseña oculta o cargando)
@@ -58,7 +58,7 @@ class _LoginFieldsState extends State<LoginFields> {
 
       if (errorMessage == null) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const TaskScreen()),
+          MaterialPageRoute(builder: (_) => const BookScreen()),
         );
       } else {
         setState(() => _error = errorMessage);

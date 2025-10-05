@@ -3,34 +3,34 @@
 import 'package:app_tareas/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 
-// Widget de formulario para crear una nueva tarea
-class NewTaskSheet extends StatefulWidget {
-  const NewTaskSheet({
+// Widget de formulario para crear un nuevo libro
+class NewBookSheet extends StatefulWidget {
+  const NewBookSheet({
     super.key, // Key opcional para identificar el widget
-    required this.onSubmit, // Callback final que recibe (title, note, due)
+    required this.onSubmit, // Callback final que recibe (title, note, returnDate)
     this.initialTitle = '', // Título inicial (útil para editar)
     this.initialNote, // Nota inicial (útil para editar)
-    this.initialDue, // Fecha inicial (útil para editar)
+    this.initialReturnDate, // Fecha inicial de devolución (útil para editar)
     this.submitLabel =
-        'Crear', // Texto del botón principal (p. ej. "Crear"/"Guardar")
+        'Agregar', // Texto del botón principal (p. ej. "Agregar"/"Guardar")
     this.titleText =
-        'Nueva tarea', // Título del formulario mostrado en la cabecera
+        'Nuevo Libro', // Título del formulario mostrado en la cabecera
   });
 
-  final void Function(String title, String? note, DateTime? due)
+  final void Function(String title, String? note, DateTime? returnDate)
   onSubmit; // Firma del callback de envío
   final String initialTitle; // Valor inicial del campo título
   final String? initialNote; // Valor inicial del campo nota
-  final DateTime? initialDue; // Valor inicial del campo fecha
+  final DateTime? initialReturnDate; // Valor inicial del campo fecha de devolución
   final String submitLabel; // Texto del botón de acción
   final String titleText;
 
   @override
-  State<NewTaskSheet> createState() => _NewTaskSheetState();
+  State<NewBookSheet> createState() => _NewBookSheetState();
 }
 
-// Estado del formulario de nueva tarea
-class _NewTaskSheetState extends State<NewTaskSheet> {
+// Estado del formulario de nuevo libro
+class _NewBookSheetState extends State<NewBookSheet> {
   // Llave global para validar el formulario
   final _formKey = GlobalKey<FormState>();
   // Controlador para el campo de título
@@ -40,30 +40,30 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
   final _titleFocus = FocusNode();
   final _noteFocus = FocusNode();
 
-  DateTime? _due;
+  DateTime? _returnDate;
 
   @override
   void initState() {
     super.initState();
     _titleCtrl = TextEditingController(text: widget.initialTitle);
     _noteCtrl = TextEditingController(text: widget.initialNote ?? "");
-    _due = widget.initialDue;
+    _returnDate = widget.initialReturnDate;
   }
 
-  Future<void> _pickDueDate() async {
+  Future<void> _pickReturnDate() async {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: _due ?? now,
+      initialDate: _returnDate ?? now,
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 5),
-      helpText: "Selecciona una fecha de vencimiento",
+      helpText: "Selecciona una fecha de devolución",
       cancelText: "Cancelar",
       confirmText: "Aceptar",
     );
     if (picked != null) {
       setState(() {
-        _due = DateTime(picked.year, picked.month, picked.day, 23, 59);
+        _returnDate = DateTime(picked.year, picked.month, picked.day, 23, 59);
       });
     }
   }
@@ -82,7 +82,7 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
     if (!_formKey.currentState!.validate()) return;
     final title = _titleCtrl.text.trim();
     final note = _noteCtrl.text.trim();
-    widget.onSubmit(title, note.isEmpty ? null : note, _due);
+    widget.onSubmit(title, note.isEmpty ? null : note, _returnDate);
   }
 
   @override
@@ -102,22 +102,22 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 12), // espacio vertical
-          // Campo para ingresar el título de la tarea
+          // Campo para ingresar el título del libro
           TextFormField(
             controller: _titleCtrl, // conecta al controlador de título
             autofocus: true, // abre el teclado automáticamente
             focusNode: _titleFocus,
             textInputAction: TextInputAction.next, // botón "siguiente"
             decoration: const InputDecoration(
-              labelText: 'Título de la tarea', // etiqueta visible
-              hintText: 'Ej: Preparar guía de ejercicios', // texto de ayuda
-              prefixIcon: Icon(Icons.title), // ícono a la izquierda
+              labelText: 'Título del libro', // etiqueta visible
+              hintText: 'Ej: Cien años de soledad', // texto de ayuda
+              prefixIcon: Icon(Icons.book), // ícono a la izquierda
               border: OutlineInputBorder(), // borde cuadrado
               filled: true, // fondo con color
             ),
             // Valida que el título no esté vacío
             validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Ingrese un título' : null,
+                (v == null || v.trim().isEmpty) ? 'Ingrese el título del libro' : null,
           ),
           const SizedBox(height: 12),
 
@@ -129,7 +129,8 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
             textInputAction: TextInputAction.done,
             onFieldSubmitted: (_) => _submit(),
             decoration: const InputDecoration(
-              labelText: 'Notas (no obligatorio)', // etiqueta visible
+              labelText: 'Observaciones (opcional)', // etiqueta visible
+              hintText: 'Ej: Autor, editorial, estado del libro...', // texto de ayuda
               prefixIcon: Icon(Icons.note_outlined), // ícono de nota
               border: OutlineInputBorder(),
               filled: true,
@@ -138,11 +139,11 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
           const SizedBox(height: 16),
 
           InkWell(
-            onTap: _pickDueDate,
+            onTap: _pickReturnDate,
             borderRadius: const BorderRadius.all(Radius.circular(12)),
             child: InputDecorator(
               decoration: const InputDecoration(
-                labelText: "Fecha de vencimiento (Opcional)",
+                labelText: "Fecha de devolución (Opcional)",
                 border: OutlineInputBorder(),
                 filled: true,
               ),
@@ -152,26 +153,26 @@ class _NewTaskSheetState extends State<NewTaskSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _due == null ? "Sin Fecha" : formatShortDate(_due!),
+                      _returnDate == null ? "Sin Fecha" : formatShortDate(_returnDate!),
                     ),
                   ),
-                  if (_due != null)
+                  if (_returnDate != null)
                     TextButton.icon(
-                      onPressed: () => setState(() => _due = null),
+                      onPressed: () => setState(() => _returnDate = null),
                       icon: const Icon(Icons.close),
                       label: const Text("Quitar"),
                     ),
                   TextButton.icon(
-                    onPressed: _pickDueDate,
+                    onPressed: _pickReturnDate,
                     icon: const Icon(Icons.edit_calendar),
-                    label: Text(_due == null ? "Elegir" : "Cambiar"),
+                    label: Text(_returnDate == null ? "Elegir" : "Cambiar"),
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          // Botón para crear la tarea
+          // Botón para agregar el libro
           SizedBox(
             height: 48,
             child: Theme(

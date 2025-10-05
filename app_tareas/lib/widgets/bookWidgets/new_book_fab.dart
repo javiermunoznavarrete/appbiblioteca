@@ -1,16 +1,16 @@
-import 'package:app_tareas/widgets/new_task_sheet.dart';
+import 'package:app_tareas/widgets/new_book_sheet.dart';
 import 'package:flutter/material.dart';
 
-class NewTaskFab extends StatelessWidget {
-  const NewTaskFab({
+class NewBookFab extends StatelessWidget {
+  const NewBookFab({
     super.key, // Key opcional para identificar el widget en el árbol
-    required this.onSubmit, // Callback requerido: recibe (title, note, due)
+    required this.onSubmit, // Callback requerido: recibe (title, note, returnDate)
     this.onCreated, // Callback opcional tras crear (p. ej., mostrar SnackBar)
-    this.labelText = 'Nueva', // Texto por defecto del FAB
-    this.icon = Icons.add, // Ícono por defecto del FAB
+    this.labelText = 'Nuevo Libro', // Texto por defecto del FAB
+    this.icon = Icons.book, // Ícono por defecto del FAB
   });
 
-  final void Function(String title, String? note, DateTime? due)
+  final void Function(String title, String? note, DateTime? returnDate)
   onSubmit; // Define parámetros a propagar
   final void Function(BuildContext context)?
   onCreated; // Callback opcional ejecutado si el sheet retorna éxito
@@ -36,9 +36,9 @@ class NewTaskFab extends StatelessWidget {
               top: 12,
               bottom: 16 + MediaQuery.of(ctx).viewInsets.bottom,
             ),
-            child: NewTaskSheet(
-              onSubmit: (title, note, due) {
-                onSubmit(title, note, due);
+            child: NewBookSheet(
+              onSubmit: (title, note, returnDate) {
+                onSubmit(title, note, returnDate);
                 Navigator.pop(ctx, true);
               },
             ),

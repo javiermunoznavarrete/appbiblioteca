@@ -1,4 +1,4 @@
-import 'package:app_tareas/models/task.dart';
+import 'package:app_tareas/models/book.dart';
 import 'package:flutter/material.dart';
 
 class FilterChipsRow extends StatelessWidget {
@@ -9,15 +9,15 @@ class FilterChipsRow extends StatelessWidget {
     this.color,
   });
 
-  final TaskFilter value;
-  final ValueChanged<TaskFilter> onChanged;
+  final BookFilter value;
+  final ValueChanged<BookFilter> onChanged;
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
     final active = color ?? Theme.of(context).colorScheme.primary;
 
-    ChoiceChip chip(String label, TaskFilter f) => ChoiceChip(
+    ChoiceChip chip(String label, BookFilter f) => ChoiceChip(
       label: Text(
         label,
         style: TextStyle(color: value == f ? Colors.white : Colors.black),
@@ -29,11 +29,12 @@ class FilterChipsRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Wrap(
-        spacing: 0,
+        spacing: 8,
         children: [
-          chip("Todas", TaskFilter.all),
-          chip("Pendientes", TaskFilter.pending),
-          chip("Completas", TaskFilter.done)          
+          chip("Todos", BookFilter.all),
+          chip("Almacenados", BookFilter.stored),
+          chip("Prestados", BookFilter.borrowed),
+          chip("Retrasados", BookFilter.overdue)
         ],
       ),
       );
