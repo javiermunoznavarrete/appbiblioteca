@@ -16,12 +16,20 @@ class AuthController {
 
   String _mapErrorCode(String code) {
     switch (code) {
-      case "invalid-credential":
-        return "Usuario o contraseña incorrecta";
-      case "user-disabled":
-        return "Usuario no habilitado";
+      case 'wrong-password':
+        return 'Usuario o contraseña incorrecta';
+      case 'user-not-found':
+        return 'Usuario no encontrado';
+      case 'invalid-email':
+        return 'Email inválido';
+      case 'user-disabled':
+        return 'Usuario no habilitado';
+      case 'too-many-requests':
+        return 'Demasiados intentos. Intenta más tarde';
+      case 'operation-not-allowed':
+        return 'El método de autenticación no está habilitado en Firebase';
       default:
-        return "No se puede iniciar sesión($code)";
+        return 'No se puede iniciar sesión ($code)';
     }
   }
 }
