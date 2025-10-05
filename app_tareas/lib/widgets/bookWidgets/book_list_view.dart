@@ -6,7 +6,7 @@ class BookListView extends StatelessWidget {
   const BookListView({
     super.key,
     required this.items,
-    required this.onToggleStatus,
+    required this.onStatusChanged,
     required this.onDelete,
     required this.dateFormatter,
     required this.swipeColor,
