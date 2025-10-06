@@ -107,14 +107,6 @@ class BookRepository {
       return matchesFilter && matchesQuery;
     }).toList();
 
-    // Ordenar por fecha ascendente (los sin fecha al final)
-    filtered.sort((a, b) {
-      if (a.book.returnDate == null && b.book.returnDate == null) return 0;
-      if (a.book.returnDate == null) return 1;
-      if (b.book.returnDate == null) return -1;
-      return a.book.returnDate!.compareTo(b.book.returnDate!);
-    });
-
     return filtered;
   }
 

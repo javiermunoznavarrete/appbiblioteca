@@ -17,6 +17,7 @@ class BookScreen extends StatefulWidget {
 
 class _BookScreenState extends State<BookScreen> {
   late final BookController _ctrl;
+  bool _sortByDate = true; // true = fecha, false = nombre
 
   @override
   void initState() {
@@ -38,11 +39,38 @@ class _BookScreenState extends State<BookScreen> {
     return AnimatedBuilder(
       animation: _ctrl,
       builder: (_, __) {
-        final items = _ctrl.filtered;
+        var items = _ctrl.filtered;
+
+        // Ordenar según opción seleccionada
+        if (_sortByDate) {
+          items.sort((a, b) {
+            if (a.returnDate == null && b.returnDate == null) return 0;
+            if (a.returnDate == null) return 1;
+            if (b.returnDate == null) return -1;
+            return a.returnDate!.compareTo(b.returnDate!);
+          });
+        } else {
+          items.sort((a, b) => a.title.toLowerCase().compareTo(b.title.toLowerCase()));
+        }
         return Scaffold(
           appBar: AppBar(
             title: const Text("Biblioteca"),
             actions: [
+              PopupMenuButton<bool>(
+                icon: const Icon(Icons.sort),
+                tooltip: "Ordenar",
+                onSelected: (value) => setState(() => _sortByDate = value),
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: true,
+                    child: Text(_sortByDate ? "✓ Por fecha" : "Por fecha"),
+                  ),
+                  PopupMenuItem(
+                    value: false,
+                    child: Text(!_sortByDate ? "✓ Por nombre" : "Por nombre"),
+                  ),
+                ],
+              ),
               FilterMenuButton(value: _ctrl.filter, onChanged: _ctrl.setFilter),
             ],
           ),
