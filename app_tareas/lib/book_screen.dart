@@ -70,9 +70,22 @@ class _BookScreenState extends State<BookScreen> {
                           items: items,
                           onStatusChanged: (b, status) => _ctrl.changeStatus(b, status),
                           onDelete: (b) {
+                            final deletedBook = b;
                             _ctrl.remove(b);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Libro Eliminado")),
+                              SnackBar(
+                                content: const Text("Libro Eliminado"),
+                                action: SnackBarAction(
+                                  label: "Deshacer",
+                                  onPressed: () {
+                                    _ctrl.add(
+                                      deletedBook.title,
+                                      note: deletedBook.note,
+                                      returnDate: deletedBook.returnDate,
+                                    );
+                                  },
+                                ),
+                              ),
                             );
                           },
                           dateFormatter: formatShortDate,
