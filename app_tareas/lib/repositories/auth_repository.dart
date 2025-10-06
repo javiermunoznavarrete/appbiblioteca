@@ -1,28 +1,22 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 class AuthRepository {
-  AuthRepository({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  /// Login mock que solo valida formato.
+  /// Retorna null si es exitoso, o un mensaje de error si falla la validación.
+  Future<String?> signIn(String email, String password) async {
+    // Simular delay de red
+    await Future.delayed(const Duration(milliseconds: 300));
 
-  final FirebaseAuth _auth;
-
-  Future<UserCredential> signIn(String email, String password) {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
-  }
-
-  /// Crea un usuario con email y contraseña usando Firebase Authentication.
-  ///
-  /// Lanza FirebaseAuthException en caso de error (email in use, weak-password, etc.).
-  Future<UserCredential> register(String email, String password) {
-    return _auth.createUserWithEmailAndPassword(email: email, password: password);
-  }
-
-  /// Elimina el usuario actualmente autenticado (si existe).
-  /// Lanza [FirebaseAuthException] si la operación falla (por ejemplo requiere reauth).
-  Future<void> deleteCurrentUser() async {
-    final user = _auth.currentUser;
-    if (user == null) {
-      throw FirebaseAuthException(code: 'user-not-signed-in', message: 'No hay usuario autenticado');
+    // Validar formato de email
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      return 'invalid-email';
     }
-    await user.delete();
+
+    // Validar longitud de contraseña (mínimo 6 caracteres)
+    if (password.length < 6) {
+      return 'weak-password';
+    }
+
+    // Login exitoso
+    return null;
   }
 }

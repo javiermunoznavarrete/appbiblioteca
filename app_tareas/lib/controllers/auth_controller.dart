@@ -1,35 +1,25 @@
 import 'package:app_tareas/repositories/auth_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthController {
   AuthController(this._repo);
   final AuthRepository _repo;
 
   Future<String?> login(String email, String password) async {
-    try {
-      await _repo.signIn(email, password);
+    final errorCode = await _repo.signIn(email, password);
+    if (errorCode == null) {
       return null;
-    } on FirebaseAuthException catch (e) {
-      return _mapErrorCode(e.code);
     }
+    return _mapErrorCode(errorCode);
   }
 
   String _mapErrorCode(String code) {
     switch (code) {
-      case 'wrong-password':
-        return 'Usuario o contraseña incorrecta';
-      case 'user-not-found':
-        return 'Usuario no encontrado';
       case 'invalid-email':
         return 'Email inválido';
-      case 'user-disabled':
-        return 'Usuario no habilitado';
-      case 'too-many-requests':
-        return 'Demasiados intentos. Intenta más tarde';
-      case 'operation-not-allowed':
-        return 'El método de autenticación no está habilitado en Firebase';
+      case 'weak-password':
+        return 'La contraseña debe tener al menos 6 caracteres';
       default:
-        return 'No se puede iniciar sesión ($code)';
+        return 'No se puede iniciar sesión';
     }
   }
 }
